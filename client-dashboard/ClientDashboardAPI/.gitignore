@@ -5,3 +5,8 @@ obj
 appsettings.json
 *.db
 wwwroot
+
+.vs/
+.vs2019/
+.vsidx
+slnx.sqlite
