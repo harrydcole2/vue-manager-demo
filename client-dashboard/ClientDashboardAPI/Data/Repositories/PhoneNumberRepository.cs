@@ -7,7 +7,7 @@ namespace ClientDashboardAPI.Data.Repositories
 {
     public class PhoneNumberRepository : ICrudRepository<PhoneNumber>
     {
-        public Task<PhoneNumber> CreateAsync(PhoneNumber entity)
+        public Task CreateAsync(PhoneNumber entity)
         {
             throw new System.NotImplementedException();
         }

@@ -13,9 +13,9 @@ namespace ClientDashboardAPI.Context
         {
             _configuration = configuration;
 
-            string user = configuration["ConnectionStrings:MYSQL_USER"];
-            string password = configuration["ConnectionStrings:MYSQL_PASSWORD"];
-            string database = configuration["ConnectionStrings:MYSQL_DATABASE"];
+            string user = _configuration["ConnectionStrings:MYSQL_USER"];
+            string password = _configuration["ConnectionStrings:MYSQL_PASSWORD"];
+            string database = _configuration["ConnectionStrings:MYSQL_DATABASE"];
 
             _connectionString =
                 $"Server=localhost;Database={database};User={user};Password={password};";

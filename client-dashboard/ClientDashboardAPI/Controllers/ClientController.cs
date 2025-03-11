@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ClientDashboardAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/client")]
     [ApiController]
     public class ClientController : ControllerBase
     {

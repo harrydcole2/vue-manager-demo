@@ -7,7 +7,7 @@ namespace ClientDashboardAPI.Data.Repositories
 {
     public class OrderRepository : ICrudRepository<Order>
     {
-        public Task<Order> CreateAsync(Order entity)
+        public Task CreateAsync(Order entity)
         {
             throw new System.NotImplementedException();
         }
