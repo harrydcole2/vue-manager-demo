@@ -1,4 +1,7 @@
-
+using ClientDashboardAPI.Context;
+using ClientDashboardAPI.Data.Model;
+using ClientDashboardAPI.Data.Repositories;
+using ClientDashboardAPI.Data.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -32,20 +35,17 @@ namespace ClientDashboardAPI
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Version = "v1",
-                    Title = "ClientDashboardAPI - WebApi",
-                });
+                c.SwaggerDoc(
+                    "v1",
+                    new OpenApiInfo { Version = "v1", Title = "ClientDashboardAPI - WebApi" }
+                );
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors(
-                options => options.WithOrigins("http://localhost:8080").AllowAnyMethod()
-            );
+            app.UseCors(options => options.WithOrigins("http://localhost:8080").AllowAnyMethod());
 
             if (env.IsDevelopment())
             {

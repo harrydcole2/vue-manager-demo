@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using ClientDashboardAPI.Context;
 using ClientDashboardAPI.Data.Model;
