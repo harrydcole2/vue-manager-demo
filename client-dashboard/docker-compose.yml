@@ -20,7 +20,7 @@ services:
   database:
     image: mysql:8.0.22
     ports:
-      - "3307:3306" # avoid collision with local MySQL with 3307
+      - "3307:3306"
     volumes:
       - datafiles:/var/lib/mysql
       - "./ClientDashboardAPI/sql-scripts/setup.sql:/docker-entrypoint-initdb.d/1.sql"
