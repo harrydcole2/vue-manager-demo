@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from "@/router";
 
 const state = {
   userId: localStorage.getItem("userId") || null,
@@ -50,6 +51,8 @@ const actions = {
     localStorage.removeItem("userId");
     localStorage.removeItem("email");
     commit("CLEAR_USER");
+
+    router.push({ name: "Home" });
   },
 };
 

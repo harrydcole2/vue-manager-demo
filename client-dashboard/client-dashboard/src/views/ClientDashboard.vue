@@ -60,6 +60,7 @@
       header-text-variant="light"
       @hidden="resetForm"
       @ok.prevent="createNewClient"
+      hide-header-close
     >
       <b-form>
         <b-form-group

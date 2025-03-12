@@ -1,5 +1,5 @@
 <template>
-  <div class="client-management">
+  <div class="client-management mt-4">
     <b-alert
       v-if="error"
       show
@@ -21,6 +21,7 @@
             id="client-name-group"
             label="Client Name:"
             label-for="client-name"
+            class="mb-3"
           >
             <b-form-input
               id="client-name"
@@ -35,6 +36,7 @@
             id="client-description-group"
             label="Description (optional):"
             label-for="client-description"
+            class="mb-4"
           >
             <b-form-textarea
               id="client-description"
@@ -44,20 +46,25 @@
             ></b-form-textarea>
           </b-form-group>
 
-          <h4 class="mt-4">Phone Numbers</h4>
+          <h4 class="mt-4 mb-3">Phone Numbers</h4>
 
           <b-card
             v-for="(phone, index) in editedClient.phones"
             :key="index"
             class="mb-3 phone-card"
           >
-            <b-row>
+            <b-row align-v="center">
               <b-col>
-                <b-form-input
-                  v-model="phone.number"
-                  placeholder="Phone number"
-                  required
-                ></b-form-input>
+                <div class="d-flex align-items-center">
+                  <b-icon-telephone
+                    class="mr-2 text-primary"
+                  ></b-icon-telephone>
+                  <b-form-input
+                    v-model="phone.number"
+                    placeholder="Phone number"
+                    required
+                  ></b-form-input>
+                </div>
               </b-col>
               <b-col cols="auto">
                 <b-button
@@ -75,11 +82,11 @@
             <b-icon-plus></b-icon-plus> Add Phone Number
           </b-button>
 
-          <div class="d-flex mt-4">
-            <b-button variant="secondary" @click="goBack" class="mr-2">
+          <div class="d-flex mt-4 action-buttons gap-3">
+            <b-button variant="secondary" @click="goBack" class="mr-3">
               Cancel
             </b-button>
-            <b-button variant="success" type="submit" class="mr-2">
+            <b-button variant="success" type="submit" class="mr-3">
               Save Changes
             </b-button>
             <b-button variant="danger" @click="showArchiveConfirm = true">
@@ -102,6 +109,7 @@
       ok-variant="danger"
       ok-title="Archive"
       @ok="archiveCurrentClient"
+      hide-header-close
     >
       <p>
         Are you sure you want to archive this client? This action cannot be
@@ -113,9 +121,15 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { BIconTelephone, BIconPlus, BIconTrash } from "bootstrap-vue";
 
 export default {
   name: "ClientManagement",
+  components: {
+    BIconTelephone,
+    BIconPlus,
+    BIconTrash,
+  },
   data() {
     return {
       editedClient: {
@@ -144,16 +158,19 @@ export default {
       this.$store.commit("clients/SET_ERROR", null);
     },
     initForm() {
-      if (this.currentClient) {
-        const phones = this.currentClient.phoneNumbers
-          ? this.currentClient.phoneNumbers.map((number) => ({ number }))
-          : [];
+      if (this.currentClient && this.currentClient.client) {
+        const client = this.currentClient.client;
+        const phoneNumbers = this.currentClient.phoneNumbers || [];
+
+        const phones = phoneNumbers.map((phoneObj) => ({
+          number: phoneObj.phone,
+        }));
 
         this.editedClient = {
-          id: this.currentClient.id,
-          name: this.currentClient.name,
-          description: this.currentClient.description || "",
-          phones: phones,
+          id: client.id,
+          name: client.name,
+          description: client.description || "",
+          phones: phones.length > 0 ? phones : [],
         };
       }
     },
@@ -164,6 +181,10 @@ export default {
       this.editedClient.phones.splice(index, 1);
     },
     async saveClient() {
+      if (this.currentClient && this.currentClient.client) {
+        this.editedClient.id = this.currentClient.client.id;
+      }
+
       this.editedClient.phones = this.editedClient.phones.filter(
         (phone) => phone.number.trim() !== ""
       );
@@ -174,9 +195,11 @@ export default {
       }
     },
     async archiveCurrentClient() {
-      const success = await this.archiveClient(this.currentClient.id);
-      if (success) {
-        this.goBack();
+      if (this.currentClient && this.currentClient.client) {
+        const success = await this.archiveClient(this.currentClient.client.id);
+        if (success) {
+          this.goBack();
+        }
       }
     },
     goBack() {
@@ -204,5 +227,10 @@ h4 {
 
 .phone-card {
   background-color: rgba(104, 176, 171, 0.05);
+  padding: 12px;
+}
+
+.action-buttons button {
+  min-width: 120px;
 }
 </style>
