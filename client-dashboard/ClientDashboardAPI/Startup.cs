@@ -24,10 +24,10 @@ namespace ClientDashboardAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IClientRepository, ClientRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPhoneNumberRepository, PhoneNumberRepository>();
             services.AddScoped<ICrudRepository<Order>, OrderRepository>();
-            services.AddScoped<ICrudRepository<PhoneNumber>, PhoneNumberRepository>();
             services.AddScoped<ICrudRepository<Product>, ProductRepository>();
-            services.AddScoped<ICrudRepository<User>, UserRepository>();
 
             services.AddSingleton<ClientDashboardContext>();
 

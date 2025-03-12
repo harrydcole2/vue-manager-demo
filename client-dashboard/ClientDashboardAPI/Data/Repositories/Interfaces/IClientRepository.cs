@@ -1,10 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ClientDashboardAPI.Data.Model;
 
 namespace ClientDashboardAPI.Data.Repositories.Interfaces
 {
-    public interface IClientRepository : ICrudRepository<Client>
+    public interface IClientRepository
     {
-        public Task ArchiveAsync(int id);
+        Task<List<Client>> GetClientsByUserId(int userId, bool archived);
+
+        Task<Client> GetClientById(int id, int userId);
+
+        Task<int> CreateClient(Client client);
+
+        Task<bool> UpdateClient(Client client);
     }
 }

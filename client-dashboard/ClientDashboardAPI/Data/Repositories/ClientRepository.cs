@@ -16,65 +16,67 @@ namespace ClientDashboardAPI.Data.Repositories
             _context = context;
         }
 
-        public async Task CreateAsync(Client client)
+        public async Task<List<Client>> GetClientsByUserId(int userId, bool archived)
         {
-            using var connection = _context.GetConnection();
+            var connection = _context.GetConnection();
 
-            await connection.ExecuteAsync(
-                "INSERT INTO Clients (Name, Description, UserId) "
-                    + "VALUES (@Name, @Description, @UserId",
-                new
-                {
-                    client.Name,
-                    client.Description,
-                    client.UserId,
-                }
+            var query =
+                @"
+                SELECT Id, Name, Description, IsArchived, UserId
+                FROM Clients
+                WHERE UserId = @UserId AND IsArchived = @IsArchived
+                ORDER BY Name";
+
+            var clients = await connection.QueryAsync<Client>(
+                query,
+                new { UserId = userId, IsArchived = archived }
             );
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            using var connection = _context.GetConnection();
-
-            await connection.ExecuteAsync("DELETE FROM Clients WHERE Id = @Id", new { Id = id });
-        }
-
-        public async Task<List<Client>> GetAllAsync()
-        {
-            using var connection = _context.GetConnection();
-
-            var clients = await connection.QueryAsync<Client>("SELECT * FROM Clients");
             return clients.AsList();
         }
 
-        public async Task<Client> GetByIdAsync(int id)
+        public async Task<Client> GetClientById(int id, int userId)
         {
-            using var connection = _context.GetConnection();
+            var connection = _context.GetConnection();
+
+            var query =
+                @"
+                SELECT Id, Name, Description, IsArchived, UserId
+                FROM Clients
+                WHERE Id = @Id AND UserId = @UserId";
 
             return await connection.QueryFirstOrDefaultAsync<Client>(
-                "SELECT * FROM Clients WHERE Id = @Id",
-                new { Id = id }
+                query,
+                new { Id = id, UserId = userId }
             );
         }
 
-        public async Task<Client> UpdateAsync(Client client)
+        public async Task<int> CreateClient(Client client)
         {
-            using var connection = _context.GetConnection();
+            var connection = _context.GetConnection();
 
-            return await connection.QueryFirstOrDefaultAsync<Client>(
-                "UPDATE Clients SET Name = @Name, Description = @Description WHERE Id = @Id",
-                new { client.Name, client.Description }
-            );
+            var query =
+                @"
+                INSERT INTO Clients (Name, Description, IsArchived, UserId)
+                VALUES (@Name, @Description, @IsArchived, @UserId);
+                SELECT CAST(SCOPE_IDENTITY() as int)";
+
+            return await connection.QuerySingleAsync<int>(query, client);
         }
 
-        public async Task ArchiveAsync(int id)
+        public async Task<bool> UpdateClient(Client client)
         {
-            using var connection = _context.GetConnection();
+            var connection = _context.GetConnection();
 
-            await connection.ExecuteAsync(
-                "UPDATE Clients SET Archived = TRUE WHERE Id = @Id",
-                new { Id = id }
-            );
+            var query =
+                @"
+                UPDATE Clients
+                SET Name = @Name,
+                    Description = @Description,
+                    IsArchived = @IsArchived
+                WHERE Id = @Id AND UserId = @UserId";
+
+            var rowsAffected = await connection.ExecuteAsync(query, client);
+            return rowsAffected > 0;
         }
     }
 }
