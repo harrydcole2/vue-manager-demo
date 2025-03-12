@@ -3,29 +3,40 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Help from "../views/Help.vue";
-import ClientList from "../views/ClientList.vue";
-import ClientDetails from "../views/ClientDetails.vue";
+import ClientDashboard from "../views/ClientDashboard.vue";
+import ClientManagement from "../views/ClientManagement.vue";
 import store from "../store";
 
 Vue.use(VueRouter);
 
 const routes = [
-  { path: "/", component: Home },
-  { path: "/login", component: Login },
-  { path: "/help", component: Help },
+  {
+    path: "/",
+    name: "Home",
+    component: Home,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+    meta: { guestOnly: true },
+  },
+  {
+    path: "/help",
+    name: "Help",
+    component: Help,
+  },
   {
     path: "/clients",
-    component: ClientList,
-    beforeEnter: (to, from, next) => {
-      store.state.auth.user ? next() : next("/login");
-    },
+    name: "ClientDashboard",
+    component: ClientDashboard,
+    meta: { requiresAuth: true },
   },
   {
     path: "/clients/:id",
-    component: ClientDetails,
-    beforeEnter: (to, from, next) => {
-      store.state.auth.user ? next() : next("/login");
-    },
+    name: "ClientManagement",
+    component: ClientManagement,
+    meta: { requiresAuth: true },
   },
 ];
 
@@ -33,6 +44,26 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = store.getters["auth/isLoggedIn"];
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isLoggedIn) {
+      next({ name: "Login" });
+    } else {
+      next();
+    }
+  } else if (to.matched.some((record) => record.meta.guestOnly)) {
+    if (isLoggedIn) {
+      next({ name: "ClientDashboard" });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

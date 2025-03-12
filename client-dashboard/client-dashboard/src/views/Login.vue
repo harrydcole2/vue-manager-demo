@@ -1,60 +1,110 @@
+<!-- src/views/Login.vue -->
 <template>
-  <b-container class="d-flex justify-content-center align-items-center vh-100">
-    <b-card
-      class="shadow-lg text-center p-4"
-      bg-variant="light"
-      text-variant="dark"
-      style="max-width: 400px"
-    >
-      <b-card-title>Login</b-card-title>
-      <b-alert v-if="error" variant="danger" show>{{ error }}</b-alert>
+  <div class="login">
+    <b-card class="login-card" title="Login">
       <b-form @submit.prevent="handleLogin">
-        <b-form-group label="Username">
-          <b-form-input v-model="username" required></b-form-input>
-        </b-form-group>
-
-        <b-form-group label="Password">
+        <b-form-group
+          id="username-group"
+          label="Username:"
+          label-for="username"
+        >
           <b-form-input
-            type="password"
-            v-model="password"
+            id="username"
+            v-model="form.username"
+            type="text"
+            placeholder="Enter username"
             required
           ></b-form-input>
         </b-form-group>
 
-        <b-button type="submit" variant="success" class="w-100">Login</b-button>
+        <b-form-group
+          id="password-group"
+          label="Password:"
+          label-for="password"
+        >
+          <b-form-input
+            id="password"
+            v-model="form.password"
+            type="password"
+            placeholder="Enter password"
+            required
+          ></b-form-input>
+        </b-form-group>
+
+        <b-alert
+          variant="danger"
+          :show="error !== null"
+          dismissible
+          @dismissed="error = null"
+        >
+          {{ error }}
+        </b-alert>
+
+        <b-button type="submit" variant="primary" :disabled="loading">
+          <b-spinner v-if="loading" small></b-spinner>
+          Login
+        </b-button>
       </b-form>
     </b-card>
-  </b-container>
+  </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
 
 export default {
+  name: "Login",
   data() {
     return {
-      username: "",
-      password: "",
+      form: {
+        username: "",
+        password: "",
+      },
+      loading: false,
       error: null,
     };
   },
   methods: {
-    ...mapActions("auth", ["login"]),
+    ...mapActions({
+      login: "auth/login",
+    }),
     async handleLogin() {
+      this.loading = true;
+      this.error = null;
+
       try {
-        await this.login({ username: this.username, password: this.password });
-        this.$router.push("/clients");
-      } catch (err) {
-        this.error = "Invalid credentials. Please try again.";
+        const success = await this.login(this.form);
+
+        if (success) {
+          this.$router.push({ name: "ClientDashboard" });
+        } else {
+          this.error = "Login failed. Please check your credentials.";
+        }
+      } catch (error) {
+        this.error = "An error occurred during login. Please try again.";
+        console.error("Login error:", error);
+      } finally {
+        this.loading = false;
       }
     },
   },
 };
 </script>
 
-<style>
-.vh-100 {
-  height: 100vh;
-  background-color: #faf3dd;
+<style scoped>
+.login {
+  min-height: calc(100vh - 120px);
+  background-image: url("../assets/repeatable_book.png");
+  background-repeat: repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-card {
+  max-width: 500px;
+  width: 100%;
+  background-color: var(--background-color);
 }
 </style>

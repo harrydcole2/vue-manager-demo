@@ -1,26 +1,23 @@
 <template>
   <div id="app">
-    <AppBar />
-    <b-container fluid>
+    <NavBar />
+    <b-container fluid class="mt-4">
       <router-view></router-view>
     </b-container>
   </div>
 </template>
 
 <script>
-import AppBar from "./components/AppBar.vue";
+import NavBar from "@/components/NavBar.vue";
 
 export default {
+  name: "App",
   components: {
-    AppBar,
+    NavBar,
   },
 };
 </script>
 
 <style>
-body {
-  background-color: #faf3dd;
-  color: black;
-  font-family: Arial, sans-serif;
-}
+@import "./assets/styles.css";
 </style>

@@ -1,0 +1,34 @@
+/* src/assets/styles.css */
+:root {
+  --primary-color: #68b0ab;
+  --background-color: #faf3dd;
+  --text-color: #000;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.navbar {
+  background-color: var(--primary-color) !important;
+}
+
+.navbar-brand,
+.nav-link {
+  color: white !important;
+}
+
+.navbar-brand:hover,
+.nav-link:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.card {
+  margin-bottom: 20px;
+}
