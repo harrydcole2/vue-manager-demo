@@ -21,7 +21,7 @@ const actions = {
       commit("SET_LOADING", true);
       commit("SET_ERROR", null);
 
-      const response = await axios.post("/api/users/login", {
+      const response = await axios.post("/users/login", {
         email: credentials.email,
         password: credentials.password,
       });
@@ -40,26 +40,6 @@ const actions = {
     } catch (error) {
       commit("SET_ERROR", error.response?.data || error.message);
       console.error("Login error:", error);
-      return false;
-    } finally {
-      commit("SET_LOADING", false);
-    }
-  },
-
-  async register({ commit }, userData) {
-    try {
-      commit("SET_LOADING", true);
-      commit("SET_ERROR", null);
-
-      await axios.post("/api/users/register", {
-        email: userData.email,
-        password: userData.password,
-      });
-
-      return true;
-    } catch (error) {
-      commit("SET_ERROR", error.response?.data || error.message);
-      console.error("Registration error:", error);
       return false;
     } finally {
       commit("SET_LOADING", false);

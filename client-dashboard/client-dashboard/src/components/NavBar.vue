@@ -18,7 +18,7 @@
         <b-nav-item v-if="!isLoggedIn" to="/login">Login</b-nav-item>
         <b-nav-item-dropdown v-else right>
           <template #button-content>
-            {{ user.username }}
+            {{ user.email }}
           </template>
           <b-dropdown-item @click="logout">Logout</b-dropdown-item>
         </b-nav-item-dropdown>

@@ -20,9 +20,9 @@ const actions = {
       commit("SET_LOADING", true);
       commit("SET_ERROR", null);
 
-      const userId = rootState.auth.userId; // Assuming you store userId in auth module
+      const userId = rootState.auth.userId;
 
-      const response = await axios.get("/api/clients", {
+      const response = await axios.get("/clients", {
         params: {
           userId,
           archived,
@@ -45,7 +45,7 @@ const actions = {
 
       const userId = rootState.auth.userId;
 
-      const response = await axios.get(`/api/clients/${id}`, {
+      const response = await axios.get(`/clients/${id}`, {
         params: {
           userId,
         },
@@ -74,7 +74,7 @@ const actions = {
         phoneNumbers: clientData.phones?.map((phone) => phone.number) || [],
       };
 
-      await axios.post("/api/clients", client, {
+      await axios.post("/clients", client, {
         params: {
           userId,
         },
@@ -105,7 +105,7 @@ const actions = {
         phoneNumbers: clientData.phones?.map((phone) => phone.number) || [],
       };
 
-      await axios.put(`/api/clients/${clientData.id}`, client, {
+      await axios.put(`/clients/${clientData.id}`, client, {
         params: {
           userId,
         },
@@ -130,7 +130,7 @@ const actions = {
       const userId = rootState.auth.userId;
 
       await axios.put(
-        `/api/clients/${id}/archive`,
+        `/clients/${id}/archive`,
         {},
         {
           params: {

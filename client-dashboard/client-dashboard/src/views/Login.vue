@@ -3,16 +3,12 @@
   <div class="login">
     <b-card class="login-card" title="Login">
       <b-form @submit.prevent="handleLogin">
-        <b-form-group
-          id="username-group"
-          label="Username:"
-          label-for="username"
-        >
+        <b-form-group id="email-group" label="email:" label-for="email">
           <b-form-input
-            id="username"
-            v-model="form.username"
+            id="email"
+            v-model="form.email"
             type="text"
-            placeholder="Enter username"
+            placeholder="Enter email"
             required
           ></b-form-input>
         </b-form-group>
@@ -57,7 +53,7 @@ export default {
   data() {
     return {
       form: {
-        username: "",
+        email: "",
         password: "",
       },
       loading: false,
