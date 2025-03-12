@@ -32,8 +32,8 @@
             </b-nav-item>
             <b-nav-item
               v-if="isAuthenticated"
-              to="/clients/archived"
-              :class="{ 'font-weight-bold': isActive('/clients/archived') }"
+              to="/archive"
+              :class="{ 'font-weight-bold': isActive('/archive') }"
             >
               Archived Clients
             </b-nav-item>

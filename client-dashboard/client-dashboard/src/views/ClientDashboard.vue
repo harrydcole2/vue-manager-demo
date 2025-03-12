@@ -39,7 +39,7 @@
                 {{ client.description }}
               </div>
               <template #footer>
-                <small class="text-muted"> </small>
+                <small class="text-muted">Active</small>
               </template>
             </b-card>
           </b-col>

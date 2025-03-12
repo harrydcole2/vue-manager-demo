@@ -4,7 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Help from "../views/Help.vue";
 import ClientDashboard from "../views/ClientDashboard.vue";
-import ClientArchivedList from "../views/ClientArchivedList.vue";
+import Archive from "../views/Archive.vue";
 import ClientManagement from "../views/ClientManagement.vue";
 import store from "../store";
 
@@ -42,12 +42,9 @@ const routes = [
     },
   },
   {
-    path: "/clients/archived",
-    name: "ClientArchivedList",
-    component: ClientArchivedList,
-    meta: {
-      requiresAuth: true,
-    },
+    path: "/archive",
+    name: "Archive",
+    component: Archive,
   },
   {
     path: "/clients/:id",
