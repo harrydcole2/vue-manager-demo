@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="home-content">
+    <b-card class="home-card">
       <h1 class="text-center mb-4">Client Management System</h1>
       <div class="text-center">
         <b-button
@@ -15,7 +15,7 @@
           Go to Clients
         </b-button>
       </div>
-    </div>
+    </b-card>
   </div>
 </template>
 
@@ -31,3 +31,20 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.home {
+  min-height: calc(100vh - 120px);
+  background-image: url("../assets/repeatable_book.png");
+  background-repeat: repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-card {
+  max-width: 700px;
+  padding: 40px 20px;
+  width: 100%;
+}
+</style>

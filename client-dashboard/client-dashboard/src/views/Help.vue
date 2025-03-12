@@ -1,4 +1,3 @@
-<!-- src/views/Help.vue -->
 <template>
   <div class="help">
     <b-card title="Help & Information">

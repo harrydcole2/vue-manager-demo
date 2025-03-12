@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Help from "../views/Help.vue";
 import ClientDashboard from "../views/ClientDashboard.vue";
+import ClientArchivedList from "../views/ClientArchivedList.vue";
 import ClientManagement from "../views/ClientManagement.vue";
 import store from "../store";
 
@@ -19,7 +20,9 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
-    meta: { guestOnly: true },
+    meta: {
+      guest: true,
+    },
   },
   {
     path: "/help",
@@ -28,15 +31,31 @@ const routes = [
   },
   {
     path: "/clients",
+    redirect: "/clients/active",
+  },
+  {
+    path: "/clients/active",
     name: "ClientDashboard",
     component: ClientDashboard,
-    meta: { requiresAuth: true },
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/clients/archived",
+    name: "ClientArchivedList",
+    component: ClientArchivedList,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/clients/:id",
     name: "ClientManagement",
     component: ClientManagement,
-    meta: { requiresAuth: true },
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 
@@ -47,17 +66,18 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = store.getters["auth/isAuthenticated"];
-
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!isLoggedIn) {
-      next({ name: "Login" });
+    if (!store.getters["auth/isAuthenticated"]) {
+      next({
+        path: "/login",
+        query: { redirect: to.fullPath },
+      });
     } else {
       next();
     }
-  } else if (to.matched.some((record) => record.meta.guestOnly)) {
-    if (isLoggedIn) {
-      next({ name: "ClientDashboard" });
+  } else if (to.matched.some((record) => record.meta.guest)) {
+    if (store.getters["auth/isAuthenticated"]) {
+      next({ path: "/clients/active" });
     } else {
       next();
     }

@@ -2,66 +2,68 @@
   <div class="client-dashboard">
     <h1>Client Dashboard</h1>
 
-    <b-row class="mb-4">
-      <b-col>
-        <b-button variant="primary" @click="showCreateModal = true">
-          <b-icon-plus></b-icon-plus> Create New Client
-        </b-button>
-      </b-col>
-    </b-row>
-
-    <b-alert
-      v-if="error"
-      show
-      variant="danger"
-      dismissible
-      @dismissed="clearError"
-    >
-      {{ error }}
-    </b-alert>
-
-    <b-overlay :show="loading" rounded="sm">
-      <b-row>
-        <b-col
-          v-for="client in allClients"
-          :key="client.id"
-          lg="4"
-          md="6"
-          class="mb-4"
-        >
-          <b-card
-            :title="client.name"
-            @click="goToClientDetail(client.id)"
-            class="client-card"
-          >
-            <div v-if="client.description" class="mb-2">
-              {{ client.description }}
-            </div>
-            <template #footer>
-              <small class="text-muted">
-                <b-icon-telephone class="mr-1"></b-icon-telephone>
-                {{
-                  client.phoneNumbers && client.phoneNumbers.length
-                    ? client.phoneNumbers.length
-                    : "No"
-                }}
-                phone number{{
-                  client.phoneNumbers && client.phoneNumbers.length !== 1
-                    ? "s"
-                    : ""
-                }}
-              </small>
-            </template>
-          </b-card>
-        </b-col>
-
-        <b-col v-if="allClients.length === 0 && !loading" cols="12">
-          <b-alert show variant="info"
-            >No clients found. Create a new client to get started.</b-alert
-          >
+    <b-container fluid>
+      <b-row class="mb-4">
+        <b-col>
+          <b-button variant="primary" @click="showCreateModal = true">
+            <b-icon-plus></b-icon-plus> Create New Client
+          </b-button>
         </b-col>
       </b-row>
-    </b-overlay>
+
+      <b-alert
+        v-if="error"
+        show
+        variant="danger"
+        dismissible
+        @dismissed="clearError"
+      >
+        {{ error }}
+      </b-alert>
+
+      <b-overlay :show="loading" rounded="sm">
+        <b-row>
+          <b-col
+            v-for="client in allClients"
+            :key="client.id"
+            lg="4"
+            md="6"
+            class="mb-4"
+          >
+            <b-card
+              :title="client.name"
+              @click="goToClientDetail(client.id)"
+              class="client-card"
+            >
+              <div v-if="client.description" class="mb-2">
+                {{ client.description }}
+              </div>
+              <template #footer>
+                <small class="text-muted">
+                  <b-icon-telephone class="mr-1"></b-icon-telephone>
+                  {{
+                    client.phoneNumbers && client.phoneNumbers.length
+                      ? client.phoneNumbers.length
+                      : "No"
+                  }}
+                  phone number{{
+                    client.phoneNumbers && client.phoneNumbers.length !== 1
+                      ? "s"
+                      : ""
+                  }}
+                </small>
+              </template>
+            </b-card>
+          </b-col>
+
+          <b-col v-if="allClients.length === 0 && !loading" cols="12">
+            <b-alert show variant="info"
+              >No clients found. Create a new client to get started.</b-alert
+            >
+          </b-col>
+        </b-row>
+      </b-overlay>
+    </b-container>
 
     <b-modal
       v-model="showCreateModal"
