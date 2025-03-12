@@ -50,9 +50,7 @@ namespace ClientDashboardAPI.Controllers
                 return Unauthorized("Invalid email or password");
             }
 
-            var token = Guid.NewGuid().ToString();
-
-            return Ok(new { Token = token });
+            return Ok(new { UserId = user.Id, user.Email });
         }
     }
 

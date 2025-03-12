@@ -1,7 +1,7 @@
 <template>
   <b-navbar toggleable="lg" type="dark">
     <b-navbar-brand to="/">
-      <b-icon-book class="mr-2"></b-icon-book>
+      <b-icon-book class="mx-2"></b-icon-book>
       Client Manager
     </b-navbar-brand>
 
@@ -11,14 +11,14 @@
       <b-navbar-nav>
         <b-nav-item to="/" exact>Home</b-nav-item>
         <b-nav-item to="/help">Help</b-nav-item>
-        <b-nav-item v-if="isLoggedIn" to="/clients">Clients</b-nav-item>
+        <b-nav-item v-if="isAuthenticated" to="/clients">Clients</b-nav-item>
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
-        <b-nav-item v-if="!isLoggedIn" to="/login">Login</b-nav-item>
+        <b-nav-item v-if="!isAuthenticated" to="/login">Login</b-nav-item>
         <b-nav-item-dropdown v-else right>
           <template #button-content>
-            {{ user.email }}
+            {{ email }}
           </template>
           <b-dropdown-item @click="logout">Logout</b-dropdown-item>
         </b-nav-item-dropdown>
@@ -34,8 +34,8 @@ export default {
   name: "NavBar",
   computed: {
     ...mapGetters({
-      isLoggedIn: "auth/isLoggedIn",
-      user: "auth/user",
+      isAuthenticated: "auth/isAuthenticated",
+      email: "auth/email",
     }),
   },
   methods: {

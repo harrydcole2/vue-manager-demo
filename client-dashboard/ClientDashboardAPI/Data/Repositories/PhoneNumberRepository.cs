@@ -43,7 +43,10 @@ namespace ClientDashboardAPI.Data.Repositories
                         VALUES (@ClientId, @PhoneNumber);
                         SELECT LAST_INSERT_ID()";
 
-            return await connection.ExecuteScalarAsync<int>(query, phoneNumber);
+            return await connection.ExecuteScalarAsync<int>(
+                query,
+                new { phoneNumber.ClientId, PhoneNumber = phoneNumber.Phone }
+            );
         }
 
         public async Task<bool> DeletePhoneNumber(int id)

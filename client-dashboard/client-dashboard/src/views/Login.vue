@@ -1,13 +1,12 @@
-<!-- src/views/Login.vue -->
 <template>
   <div class="login">
     <b-card class="login-card" title="Login">
       <b-form @submit.prevent="handleLogin">
-        <b-form-group id="email-group" label="email:" label-for="email">
+        <b-form-group id="email-group" label="Email:" label-for="email">
           <b-form-input
             id="email"
             v-model="form.email"
-            type="text"
+            type="email"
             placeholder="Enter email"
             required
           ></b-form-input>
@@ -29,15 +28,15 @@
 
         <b-alert
           variant="danger"
-          :show="error !== null"
+          :show="authError !== null"
           dismissible
-          @dismissed="error = null"
+          @dismissed="clearError"
         >
-          {{ error }}
+          {{ authError }}
         </b-alert>
 
-        <b-button type="submit" variant="primary" :disabled="loading">
-          <b-spinner v-if="loading" small></b-spinner>
+        <b-button type="submit" variant="primary" :disabled="authLoading">
+          <b-spinner v-if="authLoading" small></b-spinner>
           Login
         </b-button>
       </b-form>
@@ -46,7 +45,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "Login",
@@ -56,31 +55,30 @@ export default {
         email: "",
         password: "",
       },
-      loading: false,
-      error: null,
     };
+  },
+  computed: {
+    ...mapGetters({
+      authLoading: "auth/loading",
+      authError: "auth/error",
+    }),
   },
   methods: {
     ...mapActions({
       login: "auth/login",
     }),
+    clearError() {
+      this.$store.commit("auth/SET_ERROR", null);
+    },
     async handleLogin() {
-      this.loading = true;
-      this.error = null;
-
       try {
         const success = await this.login(this.form);
 
         if (success) {
           this.$router.push({ name: "ClientDashboard" });
-        } else {
-          this.error = "Login failed. Please check your credentials.";
         }
       } catch (error) {
-        this.error = "An error occurred during login. Please try again.";
         console.error("Login error:", error);
-      } finally {
-        this.loading = false;
       }
     },
   },
@@ -95,12 +93,10 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
 }
 
 .login-card {
   max-width: 500px;
   width: 100%;
-  background-color: var(--background-color);
 }
 </style>

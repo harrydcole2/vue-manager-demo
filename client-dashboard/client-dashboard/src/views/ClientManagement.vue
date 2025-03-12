@@ -1,5 +1,15 @@
 <template>
   <div class="client-management">
+    <b-alert
+      v-if="error"
+      show
+      variant="danger"
+      dismissible
+      @dismissed="clearError"
+    >
+      {{ error }}
+    </b-alert>
+
     <b-overlay :show="loading" rounded="sm">
       <b-card v-if="currentClient">
         <template #header>
@@ -19,6 +29,19 @@
               placeholder="Enter client name"
               required
             ></b-form-input>
+          </b-form-group>
+
+          <b-form-group
+            id="client-description-group"
+            label="Description (optional):"
+            label-for="client-description"
+          >
+            <b-form-textarea
+              id="client-description"
+              v-model="editedClient.description"
+              placeholder="Enter description"
+              rows="3"
+            ></b-form-textarea>
           </b-form-group>
 
           <h4 class="mt-4">Phone Numbers</h4>
@@ -71,7 +94,6 @@
       </b-alert>
     </b-overlay>
 
-    <!-- Archive Confirmation Modal -->
     <b-modal
       v-model="showArchiveConfirm"
       title="Confirm Archive"
@@ -97,7 +119,9 @@ export default {
   data() {
     return {
       editedClient: {
+        id: null,
         name: "",
+        description: "",
         phones: [],
       },
       showArchiveConfirm: false,
@@ -107,6 +131,7 @@ export default {
     ...mapGetters({
       currentClient: "clients/currentClient",
       loading: "clients/loading",
+      error: "clients/error",
     }),
   },
   methods: {
@@ -115,12 +140,20 @@ export default {
       updateClient: "clients/updateClient",
       archiveClient: "clients/archiveClient",
     }),
+    clearError() {
+      this.$store.commit("clients/SET_ERROR", null);
+    },
     initForm() {
       if (this.currentClient) {
+        const phones = this.currentClient.phoneNumbers
+          ? this.currentClient.phoneNumbers.map((number) => ({ number }))
+          : [];
+
         this.editedClient = {
           id: this.currentClient.id,
           name: this.currentClient.name,
-          phones: [...this.currentClient.phones.map((phone) => ({ ...phone }))],
+          description: this.currentClient.description || "",
+          phones: phones,
         };
       }
     },
@@ -131,17 +164,20 @@ export default {
       this.editedClient.phones.splice(index, 1);
     },
     async saveClient() {
-      // Filter out empty phone numbers
       this.editedClient.phones = this.editedClient.phones.filter(
         (phone) => phone.number.trim() !== ""
       );
 
-      await this.updateClient(this.editedClient);
-      this.goBack();
+      const success = await this.updateClient(this.editedClient);
+      if (success) {
+        this.goBack();
+      }
     },
     async archiveCurrentClient() {
-      await this.archiveClient(this.currentClient.id);
-      this.goBack();
+      const success = await this.archiveClient(this.currentClient.id);
+      if (success) {
+        this.goBack();
+      }
     },
     goBack() {
       this.$router.push({ name: "ClientDashboard" });

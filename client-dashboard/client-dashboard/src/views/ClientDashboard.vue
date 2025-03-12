@@ -1,4 +1,3 @@
-<!-- src/views/ClientDashboard.vue -->
 <template>
   <div class="client-dashboard">
     <h1>Client Dashboard</h1>
@@ -10,6 +9,16 @@
         </b-button>
       </b-col>
     </b-row>
+
+    <b-alert
+      v-if="error"
+      show
+      variant="danger"
+      dismissible
+      @dismissed="clearError"
+    >
+      {{ error }}
+    </b-alert>
 
     <b-overlay :show="loading" rounded="sm">
       <b-row>
@@ -25,16 +34,21 @@
             @click="goToClientDetail(client.id)"
             class="client-card"
           >
+            <div v-if="client.description" class="mb-2">
+              {{ client.description }}
+            </div>
             <template #footer>
               <small class="text-muted">
                 <b-icon-telephone class="mr-1"></b-icon-telephone>
                 {{
-                  client.phones && client.phones.length
-                    ? client.phones.length
+                  client.phoneNumbers && client.phoneNumbers.length
+                    ? client.phoneNumbers.length
                     : "No"
                 }}
                 phone number{{
-                  client.phones && client.phones.length !== 1 ? "s" : ""
+                  client.phoneNumbers && client.phoneNumbers.length !== 1
+                    ? "s"
+                    : ""
                 }}
               </small>
             </template>
@@ -49,7 +63,6 @@
       </b-row>
     </b-overlay>
 
-    <!-- Create New Client Modal -->
     <b-modal
       v-model="showCreateModal"
       title="Create New Client"
@@ -71,6 +84,19 @@
             placeholder="Enter client name"
             required
           ></b-form-input>
+        </b-form-group>
+
+        <b-form-group
+          id="client-description-group"
+          label="Description (optional):"
+          label-for="client-description"
+        >
+          <b-form-textarea
+            id="client-description"
+            v-model="newClient.description"
+            placeholder="Enter description"
+            rows="3"
+          ></b-form-textarea>
         </b-form-group>
 
         <b-form-group
@@ -107,6 +133,7 @@ export default {
       showCreateModal: false,
       newClient: {
         name: "",
+        description: "",
         phone: "",
       },
     };
@@ -115,6 +142,7 @@ export default {
     ...mapGetters({
       allClients: "clients/allClients",
       loading: "clients/loading",
+      error: "clients/error",
     }),
   },
   methods: {
@@ -122,12 +150,16 @@ export default {
       fetchClients: "clients/fetchClients",
       createClient: "clients/createClient",
     }),
+    clearError() {
+      this.$store.commit("clients/SET_ERROR", null);
+    },
     goToClientDetail(id) {
       this.$router.push({ name: "ClientManagement", params: { id } });
     },
     resetForm() {
       this.newClient = {
         name: "",
+        description: "",
         phone: "",
       };
     },
@@ -136,11 +168,14 @@ export default {
 
       const clientData = {
         name: this.newClient.name,
+        description: this.newClient.description,
         phones: this.newClient.phone ? [{ number: this.newClient.phone }] : [],
       };
 
-      await this.createClient(clientData);
-      this.showCreateModal = false;
+      const success = await this.createClient(clientData);
+      if (success) {
+        this.showCreateModal = false;
+      }
     },
   },
   created() {
