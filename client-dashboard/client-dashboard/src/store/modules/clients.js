@@ -67,7 +67,6 @@ const actions = {
 
       const userId = rootState.auth.userId;
 
-      // Prepare client object according to API schema
       const client = {
         name: clientData.name,
         description: clientData.description,
@@ -80,7 +79,6 @@ const actions = {
         },
       });
 
-      // After creating, refresh the list
       await dispatch("fetchClients");
       return true;
     } catch (error) {

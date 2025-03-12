@@ -1,13 +1,11 @@
 <template>
   <b-navbar toggleable="lg" type="dark">
     <div class="container-fluid d-flex justify-content-between">
-      <!-- Brand on the left -->
       <b-navbar-brand to="/">
         <b-icon-book class="mx-2"></b-icon-book>
         Client Manager
       </b-navbar-brand>
 
-      <!-- Navigation items on the right with proper spacing -->
       <div>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -25,7 +23,6 @@
               >Help</b-nav-item
             >
 
-            <!-- Client tabs instead of dropdown -->
             <b-nav-item
               v-if="isAuthenticated"
               to="/clients/active"
@@ -41,7 +38,6 @@
               Archived Clients
             </b-nav-item>
 
-            <!-- Login item for unauthenticated users -->
             <b-nav-item
               v-if="!isAuthenticated"
               to="/login"
@@ -50,7 +46,6 @@
               Login
             </b-nav-item>
 
-            <!-- Logout button for authenticated users -->
             <b-nav-item v-if="isAuthenticated" class="nav-button-item">
               <b-button size="sm" variant="outline-light" @click="logout">
                 Logout

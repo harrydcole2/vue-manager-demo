@@ -22,7 +22,7 @@ namespace ClientDashboardAPI.Data.Repositories
 
             var query =
                 @"
-                SELECT Id, ClientId, PhoneNumber
+                SELECT Id, ClientId, Phone
                 FROM PhoneNumbers
                 WHERE ClientId = @ClientId";
 
@@ -39,13 +39,13 @@ namespace ClientDashboardAPI.Data.Repositories
 
             var query =
                 @"
-                        INSERT INTO PhoneNumbers (ClientId, PhoneNumber)
-                        VALUES (@ClientId, @PhoneNumber);
-                        SELECT LAST_INSERT_ID()";
+                INSERT INTO PhoneNumbers (ClientId, Phone)
+                VALUES (@ClientId, @Phone);
+                SELECT LAST_INSERT_ID()";
 
             return await connection.ExecuteScalarAsync<int>(
                 query,
-                new { phoneNumber.ClientId, PhoneNumber = phoneNumber.Phone }
+                new { phoneNumber.ClientId, phoneNumber.Phone }
             );
         }
 

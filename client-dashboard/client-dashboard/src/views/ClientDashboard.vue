@@ -1,6 +1,6 @@
 <template>
   <div class="client-dashboard">
-    <h1>Client Dashboard</h1>
+    <h1 class="mt-4">Client Dashboard</h1>
 
     <b-container fluid>
       <b-row class="mb-4">
@@ -39,19 +39,7 @@
                 {{ client.description }}
               </div>
               <template #footer>
-                <small class="text-muted">
-                  <b-icon-telephone class="mr-1"></b-icon-telephone>
-                  {{
-                    client.phoneNumbers && client.phoneNumbers.length
-                      ? client.phoneNumbers.length
-                      : "No"
-                  }}
-                  phone number{{
-                    client.phoneNumbers && client.phoneNumbers.length !== 1
-                      ? "s"
-                      : ""
-                  }}
-                </small>
+                <small class="text-muted"> </small>
               </template>
             </b-card>
           </b-col>

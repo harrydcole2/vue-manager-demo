@@ -2,7 +2,12 @@
   <div class="login">
     <b-card class="login-card" title="Login">
       <b-form @submit.prevent="handleLogin">
-        <b-form-group id="email-group" label="Email:" label-for="email">
+        <b-form-group
+          id="email-group"
+          label="Email:"
+          label-for="email"
+          class="mb-4"
+        >
           <b-form-input
             id="email"
             v-model="form.email"
@@ -16,6 +21,7 @@
           id="password-group"
           label="Password:"
           label-for="password"
+          class="mb-4"
         >
           <b-form-input
             id="password"
@@ -31,11 +37,17 @@
           :show="authError !== null"
           dismissible
           @dismissed="clearError"
+          class="mb-4"
         >
           {{ authError }}
         </b-alert>
 
-        <b-button type="submit" variant="primary" :disabled="authLoading">
+        <b-button
+          type="submit"
+          variant="primary"
+          :disabled="authLoading"
+          class="w-100 mt-2"
+        >
           <b-spinner v-if="authLoading" small></b-spinner>
           Login
         </b-button>
@@ -93,10 +105,26 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
 }
 
 .login-card {
   max-width: 500px;
   width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.b-form-group label {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.b-form-input {
+  padding: 10px 12px;
+}
+
+.btn-primary {
+  padding: 10px 0;
+  font-weight: 500;
 }
 </style>
