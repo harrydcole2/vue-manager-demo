@@ -18,7 +18,7 @@ namespace ClientDashboardAPI.Data.Repositories
 
         public async Task<List<Client>> GetClientsByUserId(int userId, bool archived)
         {
-            var connection = _context.GetConnection();
+            using var connection = _context.GetConnection();
 
             var query =
                 @"
@@ -36,7 +36,7 @@ namespace ClientDashboardAPI.Data.Repositories
 
         public async Task<Client> GetClientById(int id, int userId)
         {
-            var connection = _context.GetConnection();
+            using var connection = _context.GetConnection();
 
             var query =
                 @"
@@ -52,20 +52,20 @@ namespace ClientDashboardAPI.Data.Repositories
 
         public async Task<int> CreateClient(Client client)
         {
-            var connection = _context.GetConnection();
+            using var connection = _context.GetConnection();
 
             var query =
                 @"
                 INSERT INTO Clients (Name, Description, IsArchived, UserId)
                 VALUES (@Name, @Description, @IsArchived, @UserId);
-                SELECT CAST(SCOPE_IDENTITY() as int)";
+                SELECT LAST_INSERT_ID()";
 
-            return await connection.QuerySingleAsync<int>(query, client);
+            return await connection.ExecuteScalarAsync<int>(query, client);
         }
 
         public async Task<bool> UpdateClient(Client client)
         {
-            var connection = _context.GetConnection();
+            using var connection = _context.GetConnection();
 
             var query =
                 @"

@@ -18,7 +18,7 @@ namespace ClientDashboardAPI.Data.Repositories
 
         public async Task<List<PhoneNumber>> GetPhoneNumbersByClientId(int clientId)
         {
-            var connection = _context.GetConnection();
+            using var connection = _context.GetConnection();
 
             var query =
                 @"
@@ -35,20 +35,20 @@ namespace ClientDashboardAPI.Data.Repositories
 
         public async Task<int> AddPhoneNumber(PhoneNumber phoneNumber)
         {
-            var connection = _context.GetConnection();
+            using var connection = _context.GetConnection();
 
             var query =
                 @"
-                INSERT INTO PhoneNumbers (ClientId, PhoneNumber)
-                VALUES (@ClientId, @PhoneNumber);
-                SELECT CAST(SCOPE_IDENTITY() as int)";
+                        INSERT INTO PhoneNumbers (ClientId, PhoneNumber)
+                        VALUES (@ClientId, @PhoneNumber);
+                        SELECT LAST_INSERT_ID()";
 
-            return await connection.QuerySingleAsync<int>(query, phoneNumber);
+            return await connection.ExecuteScalarAsync<int>(query, phoneNumber);
         }
 
         public async Task<bool> DeletePhoneNumber(int id)
         {
-            var connection = _context.GetConnection();
+            using var connection = _context.GetConnection();
 
             var query = "DELETE FROM PhoneNumbers WHERE Id = @Id";
             var rowsAffected = await connection.ExecuteAsync(query, new { Id = id });

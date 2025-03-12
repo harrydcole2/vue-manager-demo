@@ -40,9 +40,9 @@ namespace ClientDashboardAPI.Data.Repositories
                 @"
                 INSERT INTO Users (Email, PasswordHash)
                 VALUES (@Email, @PasswordHash);
-                SELECT CAST(SCOPE_IDENTITY() as int)";
+                SELECT LAST_INSERT_ID();";
 
-            return await connection.QuerySingleAsync<int>(query, user);
+            return await connection.ExecuteScalarAsync<int>(query, user);
         }
     }
 }
