@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <AppBar />
-    <router-view />
+    <b-container fluid>
+      <router-view></router-view>
+    </b-container>
   </div>
 </template>
 
@@ -17,7 +19,7 @@ export default {
 
 <style>
 body {
-  background-color: #cfe0c3;
+  background-color: #faf3dd;
   color: black;
   font-family: Arial, sans-serif;
 }

@@ -1,13 +1,15 @@
 <template>
-  <div class="container">
-    <h1>Help</h1>
-    <p>If you need assistance, please contact support@example.com.</p>
-  </div>
+  <b-container class="text-center py-5">
+    <b-card class="shadow-sm" header="Help">
+      <b-card-text>
+        If you need assistance, please contact <b>support@example.com</b>.
+      </b-card-text>
+    </b-card>
+  </b-container>
 </template>
 
 <style>
-.container {
-  text-align: center;
-  margin-top: 50px;
+b-container {
+  background-color: #faf3dd;
 }
 </style>

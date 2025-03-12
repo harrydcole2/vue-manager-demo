@@ -1,10 +1,21 @@
 <template>
-  <div class="container">
-    <h1>Welcome to Client Dashboard</h1>
-    <p v-if="!isAuthenticated">Please log in to continue.</p>
-    <button v-if="!isAuthenticated" @click="login">Login</button>
-    <p v-else>You're already logged in!</p>
-  </div>
+  <b-container class="d-flex justify-content-center align-items-center vh-100">
+    <b-card
+      class="text-center shadow-lg"
+      bg-variant="light"
+      text-variant="dark"
+      style="max-width: 400px"
+    >
+      <b-card-title>Welcome to Client Dashboard</b-card-title>
+      <b-card-text v-if="!isAuthenticated"
+        >Please log in to continue.</b-card-text
+      >
+      <b-button v-if="!isAuthenticated" variant="success" @click="login"
+        >Login</b-button
+      >
+      <b-alert v-else variant="info" show>You are already logged in.</b-alert>
+    </b-card>
+  </b-container>
 </template>
 
 <script>
@@ -21,16 +32,8 @@ export default {
 </script>
 
 <style>
-.container {
-  text-align: center;
-  margin-top: 50px;
-}
-button {
-  padding: 10px 15px;
-  background-color: #9ec1a3;
-  border: none;
-  color: black;
-  font-size: 16px;
-  cursor: pointer;
+.vh-100 {
+  height: 100vh;
+  background-color: #faf3dd;
 }
 </style>

@@ -1,20 +1,24 @@
 <template>
-  <div class="container">
-    <h1>Edit Client</h1>
-    <div v-if="client">
-      <label>Name:</label>
-      <input v-model="client.name" />
+  <b-container class="py-5">
+    <b-card class="shadow-sm" header="Edit Client">
+      <b-form v-if="client">
+        <b-form-group label="Name">
+          <b-form-input v-model="client.name"></b-form-input>
+        </b-form-group>
 
-      <label>Email:</label>
-      <input v-model="client.email" />
+        <b-form-group label="Email">
+          <b-form-input v-model="client.email"></b-form-input>
+        </b-form-group>
 
-      <label>Phone:</label>
-      <input v-model="client.phone" />
+        <b-form-group label="Phone">
+          <b-form-input v-model="client.phone"></b-form-input>
+        </b-form-group>
 
-      <button @click="saveClient">Save</button>
-    </div>
-    <p v-else>Loading client details...</p>
-  </div>
+        <b-button variant="success" @click="saveClient">Save</b-button>
+      </b-form>
+      <b-spinner v-else label="Loading..."></b-spinner>
+    </b-card>
+  </b-container>
 </template>
 
 <script>
@@ -33,7 +37,7 @@ export default {
     const clientId = this.$route.params.id;
     this.client = this.clients.find((c) => c.id === clientId);
     if (!this.client) {
-      await this.fetchClients(); // Ensure data is loaded
+      await this.fetchClients();
       this.client = this.clients.find((c) => c.id === clientId);
     }
   },
@@ -46,23 +50,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.container {
-  text-align: center;
-  margin-top: 20px;
-}
-input {
-  display: block;
-  margin: 10px auto;
-  padding: 8px;
-  border: 1px solid black;
-}
-button {
-  padding: 8px 12px;
-  background-color: #9ec1a3;
-  border: none;
-  color: black;
-  cursor: pointer;
-}
-</style>
