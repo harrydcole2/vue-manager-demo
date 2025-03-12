@@ -13,7 +13,10 @@
     <b-overlay :show="loading" rounded="sm">
       <b-card v-if="currentClient">
         <template #header>
-          <h2 class="mb-0">Edit Client: {{ currentClient.name }}</h2>
+          <h2 class="mb-0">
+            {{ isArchived ? "View Archived Client:" : "Edit Client:" }}
+            {{ currentClient.client.name }}
+          </h2>
         </template>
 
         <b-form @submit.prevent="saveClient">
@@ -23,13 +26,19 @@
             label-for="client-name"
             class="mb-3"
           >
-            <b-form-input
-              id="client-name"
-              v-model="editedClient.name"
-              type="text"
-              placeholder="Enter client name"
-              required
-            ></b-form-input>
+            <template v-if="isArchived">
+              <p>{{ editedClient.name }}</p>
+            </template>
+            <template v-else>
+              <b-form-input
+                id="client-name"
+                v-model="editedClient.name"
+                type="text"
+                placeholder="Enter client name"
+                required
+                :disabled="isArchived"
+              ></b-form-input>
+            </template>
           </b-form-group>
 
           <b-form-group
@@ -38,12 +47,18 @@
             label-for="client-description"
             class="mb-4"
           >
-            <b-form-textarea
-              id="client-description"
-              v-model="editedClient.description"
-              placeholder="Enter description"
-              rows="3"
-            ></b-form-textarea>
+            <template v-if="isArchived">
+              <p>{{ editedClient.description }}</p>
+            </template>
+            <template v-else>
+              <b-form-textarea
+                id="client-description"
+                v-model="editedClient.description"
+                placeholder="Enter description"
+                rows="3"
+                :disabled="isArchived"
+              ></b-form-textarea>
+            </template>
           </b-form-group>
 
           <h4 class="mt-4 mb-3">Phone Numbers</h4>
@@ -56,42 +71,54 @@
             <b-row align-v="center">
               <b-col>
                 <div class="d-flex align-items-center">
-                  <b-icon-telephone
-                    class="mr-2 text-primary"
-                  ></b-icon-telephone>
-                  <b-form-input
-                    v-model="phone.number"
-                    placeholder="Phone number"
-                    required
-                  ></b-form-input>
+                  <template v-if="isArchived">
+                    <p>{{ phone.number }}</p>
+                  </template>
+                  <template v-else>
+                    <b-icon-telephone
+                      class="mr-2 text-primary"
+                    ></b-icon-telephone>
+                    <b-form-input
+                      v-model="phone.number"
+                      placeholder="Phone number"
+                      required
+                      :disabled="isArchived"
+                    ></b-form-input>
+                  </template>
                 </div>
               </b-col>
               <b-col cols="auto">
-                <b-button
-                  variant="danger"
-                  @click="removePhone(index)"
-                  size="sm"
-                >
-                  <b-icon-trash></b-icon-trash>
-                </b-button>
+                <template v-if="!isArchived">
+                  <b-button
+                    variant="danger"
+                    @click="removePhone(index)"
+                    size="sm"
+                  >
+                    <b-icon-trash></b-icon-trash>
+                  </b-button>
+                </template>
               </b-col>
             </b-row>
           </b-card>
 
-          <b-button variant="outline-primary" @click="addPhone" class="mb-4">
-            <b-icon-plus></b-icon-plus> Add Phone Number
-          </b-button>
+          <template v-if="!isArchived">
+            <b-button variant="outline-primary" @click="addPhone" class="mb-4">
+              <b-icon-plus></b-icon-plus> Add Phone Number
+            </b-button>
+          </template>
 
           <div class="d-flex mt-4 action-buttons gap-3">
             <b-button variant="secondary" @click="goBack" class="mr-3">
               Cancel
             </b-button>
-            <b-button variant="success" type="submit" class="mr-3">
-              Save Changes
-            </b-button>
-            <b-button variant="danger" @click="showArchiveConfirm = true">
-              Archive Client
-            </b-button>
+            <template v-if="!isArchived">
+              <b-button variant="success" type="submit" class="mr-3">
+                Save Changes
+              </b-button>
+              <b-button variant="danger" @click="showArchiveConfirm = true">
+                Archive Client
+              </b-button>
+            </template>
           </div>
         </b-form>
       </b-card>
@@ -130,6 +157,12 @@ export default {
     BIconPlus,
     BIconTrash,
   },
+  props: {
+    id: {
+      type: Number,
+      required: true,
+    },
+  },
   data() {
     return {
       editedClient: {
@@ -147,6 +180,9 @@ export default {
       loading: "clients/loading",
       error: "clients/error",
     }),
+    isArchived() {
+      return this.currentClient?.client?.isArchived || false;
+    },
   },
   methods: {
     ...mapActions({
