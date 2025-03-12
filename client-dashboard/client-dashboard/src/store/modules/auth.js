@@ -1,56 +1,94 @@
-// import axios from "axios";
+import axios from "axios";
 
 const state = {
-  //   token: localStorage.getItem("token") || null,
-  //   user: JSON.parse(localStorage.getItem("user")) || null,
+  userId: localStorage.getItem("userId") || null,
+  email: localStorage.getItem("email") || null,
+  loading: false,
+  error: null,
 };
 
 const getters = {
-  //   isLoggedIn: (state) => !!state.token,
-  //   user: (state) => state.user,
+  isAuthenticated: (state) => !!state.userId,
+  userId: (state) => state.userId,
+  email: (state) => state.email,
+  loading: (state) => state.loading,
+  error: (state) => state.error,
 };
 
 const actions = {
-  //   async login({ commit }, credentials) {
-  //     try {
-  //       // This would be replaced with your actual API endpoint
-  //       // const response = await axios.post('/api/user/login', credentials)
-  //       console.log("Login credentials:", credentials, axios.defaults.baseURL);
-  //       const mockResponse = {
-  //         data: {
-  //           token: "mock-token",
-  //           user: {
-  //             id: 1,
-  //             username: "testuser",
-  //           },
-  //         },
-  //       };
-  //       const { token, user } = mockResponse.data;
-  //       localStorage.setItem("token", token);
-  //       localStorage.setItem("user", JSON.stringify(user));
-  //       commit("SET_AUTH", { token, user });
-  //       return true;
-  //     } catch (error) {
-  //       console.error("Login error:", error);
-  //       return false;
-  //     }
-  //   },
-  //   logout({ commit }) {
-  //     localStorage.removeItem("token");
-  //     localStorage.removeItem("user");
-  //     commit("CLEAR_AUTH");
-  //   },
+  async login({ commit }, credentials) {
+    try {
+      commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
+
+      const response = await axios.post("/api/users/login", {
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      const userData = response.data;
+
+      commit("SET_USER", {
+        userId: userData.userId,
+        email: userData.email,
+      });
+
+      localStorage.setItem("userId", userData.userId);
+      localStorage.setItem("email", userData.email);
+
+      return true;
+    } catch (error) {
+      commit("SET_ERROR", error.response?.data || error.message);
+      console.error("Login error:", error);
+      return false;
+    } finally {
+      commit("SET_LOADING", false);
+    }
+  },
+
+  async register({ commit }, userData) {
+    try {
+      commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
+
+      await axios.post("/api/users/register", {
+        email: userData.email,
+        password: userData.password,
+      });
+
+      return true;
+    } catch (error) {
+      commit("SET_ERROR", error.response?.data || error.message);
+      console.error("Registration error:", error);
+      return false;
+    } finally {
+      commit("SET_LOADING", false);
+    }
+  },
+
+  logout({ commit }) {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("email");
+    commit("CLEAR_USER");
+  },
 };
 
 const mutations = {
-  //   SET_AUTH(state, { token, user }) {
-  //     state.token = token;
-  //     state.user = user;
-  //   },
-  //   CLEAR_AUTH(state) {
-  //     state.token = null;
-  //     state.user = null;
-  //   },
+  SET_LOADING(state, loading) {
+    state.loading = loading;
+  },
+  SET_ERROR(state, error) {
+    state.error = error;
+  },
+  SET_USER(state, { userId, email }) {
+    state.userId = userId;
+    state.email = email;
+  },
+  CLEAR_USER(state) {
+    state.userId = null;
+    state.email = null;
+    state.error = null;
+  },
 };
 
 export default {

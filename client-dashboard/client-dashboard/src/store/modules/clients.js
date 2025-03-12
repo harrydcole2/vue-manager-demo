@@ -1,5 +1,3 @@
-// import axios from "axios";
-
 import axios from "axios";
 
 const state = {
@@ -13,37 +11,27 @@ const getters = {
   allClients: (state) => state.clients,
   currentClient: (state) => state.currentClient,
   loading: (state) => state.loading,
+  error: (state) => state.error,
 };
 
 const actions = {
-  async fetchClients({ commit, rootState }) {
+  async fetchClients({ commit, rootState }, archived = false) {
     try {
       commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
 
-      // API call would be:
-      // const response = await axios.get('/api/clients', {
-      //   headers: { Authorization: `Bearer ${rootState.auth.token}` }
-      // })
-      console.log(rootState, axios.defaults.baseURL);
+      const userId = rootState.auth.userId; // Assuming you store userId in auth module
 
-      const mockClients = [
-        {
-          id: 1,
-          name: "Client A",
-          archived: false,
-          phones: [{ id: 1, number: "555-123-4567" }],
+      const response = await axios.get("/api/clients", {
+        params: {
+          userId,
+          archived,
         },
-        {
-          id: 2,
-          name: "Client B",
-          archived: false,
-          phones: [{ id: 2, number: "555-987-6543" }],
-        },
-      ];
+      });
 
-      commit("SET_CLIENTS", mockClients);
+      commit("SET_CLIENTS", response.data);
     } catch (error) {
-      commit("SET_ERROR", error.message);
+      commit("SET_ERROR", error.response?.data || error.message);
       console.error("Error fetching clients:", error);
     } finally {
       commit("SET_LOADING", false);
@@ -53,68 +41,82 @@ const actions = {
   async fetchClient({ commit, rootState }, id) {
     try {
       commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
 
-      // API call would be:
-      // const response = await axios.get(`/api/clients/${id}`, {
-      //   headers: { Authorization: `Bearer ${rootState.auth.token}` }
-      // })
-      console.log(rootState);
+      const userId = rootState.auth.userId;
 
-      // Mock data for now
-      const mockClient = {
-        id: id,
-        name: "Client " + id,
-        archived: false,
-        phones: [
-          { id: 1, number: "555-123-4567" },
-          { id: 2, number: "555-987-6543" },
-        ],
-      };
+      const response = await axios.get(`/api/clients/${id}`, {
+        params: {
+          userId,
+        },
+      });
 
-      commit("SET_CURRENT_CLIENT", mockClient);
+      commit("SET_CURRENT_CLIENT", response.data);
     } catch (error) {
-      commit("SET_ERROR", error.message);
+      commit("SET_ERROR", error.response?.data || error.message);
       console.error(`Error fetching client ${id}:`, error);
     } finally {
       commit("SET_LOADING", false);
     }
   },
 
-  async createClient({ commit, dispatch, rootState }, client) {
+  async createClient({ commit, dispatch, rootState }, clientData) {
     try {
       commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
 
-      // API call would be:
-      // const response = await axios.post('/api/clients', client, {
-      //   headers: { Authorization: `Bearer ${rootState.auth.token}` }
-      // })
-      console.log(rootState, client);
+      const userId = rootState.auth.userId;
+
+      // Prepare client object according to API schema
+      const client = {
+        name: clientData.name,
+        description: clientData.description,
+        phoneNumbers: clientData.phones?.map((phone) => phone.number) || [],
+      };
+
+      await axios.post("/api/clients", client, {
+        params: {
+          userId,
+        },
+      });
 
       // After creating, refresh the list
       await dispatch("fetchClients");
+      return true;
     } catch (error) {
-      commit("SET_ERROR", error.message);
+      commit("SET_ERROR", error.response?.data || error.message);
       console.error("Error creating client:", error);
+      return false;
     } finally {
       commit("SET_LOADING", false);
     }
   },
 
-  async updateClient({ commit, dispatch, rootState }, client) {
+  async updateClient({ commit, dispatch, rootState }, clientData) {
     try {
       commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
 
-      // API call would be:
-      // const response = await axios.put(`/api/clients/${client.id}`, client, {
-      //   headers: { Authorization: `Bearer ${rootState.auth.token}` }
-      // })
-      console.log(rootState);
+      const userId = rootState.auth.userId;
 
-      // After updating, refresh the list
+      const client = {
+        name: clientData.name,
+        description: clientData.description,
+        phoneNumbers: clientData.phones?.map((phone) => phone.number) || [],
+      };
+
+      await axios.put(`/api/clients/${clientData.id}`, client, {
+        params: {
+          userId,
+        },
+      });
+
       await dispatch("fetchClients");
+      return true;
     } catch (error) {
-      commit("SET_ERROR", error.message);
-      console.error(`Error updating client ${client.id}:`, error);
+      commit("SET_ERROR", error.response?.data || error.message);
+      console.error(`Error updating client ${clientData.id}:`, error);
+      return false;
     } finally {
       commit("SET_LOADING", false);
     }
@@ -123,86 +125,26 @@ const actions = {
   async archiveClient({ commit, dispatch, rootState }, id) {
     try {
       commit("SET_LOADING", true);
+      commit("SET_ERROR", null);
 
-      // API call would be:
-      // const response = await axios.put(`/api/clients/${id}/archive`, {}, {
-      //   headers: { Authorization: `Bearer ${rootState.auth.token}` }
-      // })
-      console.log(rootState);
+      const userId = rootState.auth.userId;
 
-      // After archiving, refresh the list
+      await axios.put(
+        `/api/clients/${id}/archive`,
+        {},
+        {
+          params: {
+            userId,
+          },
+        }
+      );
+
       await dispatch("fetchClients");
+      return true;
     } catch (error) {
-      commit("SET_ERROR", error.message);
+      commit("SET_ERROR", error.response?.data || error.message);
       console.error(`Error archiving client ${id}:`, error);
-    } finally {
-      commit("SET_LOADING", false);
-    }
-  },
-
-  async addPhone({ commit, dispatch, rootState }, { clientId, phone }) {
-    try {
-      commit("SET_LOADING", true);
-
-      // API call would be:
-      // const response = await axios.post(`/api/clients/${clientId}/phones`, phone, {
-      //   headers: { Authorization: `Bearer ${rootState.auth.token}` }
-      // })
-      console.log(rootState, phone);
-
-      // After adding phone, refresh the client
-      await dispatch("fetchClient", clientId);
-    } catch (error) {
-      commit("SET_ERROR", error.message);
-      console.error(`Error adding phone to client ${clientId}:`, error);
-    } finally {
-      commit("SET_LOADING", false);
-    }
-  },
-
-  async updatePhone(
-    { commit, dispatch, rootState },
-    { clientId, phoneId, phone }
-  ) {
-    try {
-      commit("SET_LOADING", true);
-
-      // API call would be:
-      // const response = await axios.put(`/api/clients/${clientId}/phones/${phoneId}`, phone, {
-      //   headers: { Authorization: `Bearer ${rootState.auth.token}` }
-      // })
-      console.log(rootState, phone);
-
-      // After updating phone, refresh the client
-      await dispatch("fetchClient", clientId);
-    } catch (error) {
-      commit("SET_ERROR", error.message);
-      console.error(
-        `Error updating phone ${phoneId} for client ${clientId}:`,
-        error
-      );
-    } finally {
-      commit("SET_LOADING", false);
-    }
-  },
-
-  async deletePhone({ commit, dispatch, rootState }, { clientId, phoneId }) {
-    try {
-      commit("SET_LOADING", true);
-
-      // API call would be:
-      // const response = await axios.delete(`/api/clients/${clientId}/phones/${phoneId}`, {
-      //   headers: { Authorization: `Bearer ${rootState.auth.token}` }
-      // })
-      console.log(rootState);
-
-      await dispatch("fetchClient", clientId);
-    } catch (error) {
-      commit("SET_ERROR", error.message);
-      console.error(
-        `Error deleting phone ${phoneId} from client ${clientId}:`,
-        error
-      );
+      return false;
     } finally {
       commit("SET_LOADING", false);
     }
